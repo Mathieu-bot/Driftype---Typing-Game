@@ -1,4 +1,4 @@
 export const API_URL =
   window.location.hostname === "127.0.0.1"
     ? "http://localhost:3000/api"
-    : "https://driftype-typing-game.onrender.com";
+    : "https://driftype-typing-game.onrender.com/api";
