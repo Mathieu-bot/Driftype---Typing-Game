@@ -195,3 +195,38 @@ body {
 .animate-float {
   animation: float 2s ease-in-out infinite;
 }
+
+.word-display {
+  text-align: justify;
+  word-break: keep-all;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  hyphens: none;
+  word-spacing: -0.1em;
+}
+.letter .space-character{
+  position: relative;
+  display: inline-block;
+  white-space: pre-wrap;
+  vertical-align: top;
+}
+.letter {
+  position:relative;
+}
+
+.letter:has(.error-overlay) {
+  visibility: hidden;
+}
+
+.error-overlay {
+  position: absolute;
+  left: 0;
+  color: red;
+  text-decoration: none;
+  visibility: visible !important;
+}
+.space-character {
+  display: inline-block;
+  width: 0.5em;
+  visibility:visible !important;
+}

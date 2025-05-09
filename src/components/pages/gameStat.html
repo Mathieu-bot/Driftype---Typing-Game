@@ -80,11 +80,11 @@
             <button
               data-tooltip-target="tooltip-statistics"
               type="button"
-              class="flex flex-col items-center justify-center hover:bg-[var(--color-bg)] transition w-full h-full cursor-pointer"
+              class="flex flex-col items-center justify-center bg-[var(--color-bg)] transition w-full h-full cursor-pointer"
               id="stat-btn"
             >
               <i
-                class="fa-solid fa-chart-column text-[var(--color-text)] text-2xl group-hover:text-amber-500"
+                class="fa-solid fa-chart-column text-2xl text-amber-500"
               ></i>
               <span class="sr-only">Statistics</span>
             </button>
@@ -500,6 +500,11 @@
                   >
                     Language
                   </th>
+                  <th
+                    class="px-6 py-4 font-medium text-[var(--color-text-secondary)] uppercase tracking-wider"
+                  >
+                    Type
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-[var(--color-border)]" id="tbody">
@@ -515,6 +520,11 @@
                     </div>
                   </td>
                   <td class="px-6 py-4">
+                    <div class="flex justify-center items-center">
+                      <div class="loader"></div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-[var(--color-text)]">
                     <div class="flex justify-center items-center">
                       <div class="loader"></div>
                     </div>

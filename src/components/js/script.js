@@ -1,4 +1,4 @@
-import { getRandomWord } from "./dictionaries.js";
+import { getRandomWord, getWordsByDifficulty } from "./dictionaries.js";
 import { checkBadges, badgeManager } from "./badges.js";
 import { tinykeys } from "./tinykeys.js";
 import {
@@ -11,12 +11,12 @@ import { API_URL } from "../../utils/url.js";
 // Typewriter click sound: try loading sample, fallback to generated click
 let keyAudio;
 try {
-  keyAudio = new Audio('/src/assets/typewriter-key.mp3');
+  keyAudio = new Audio("/src/assets/typewriter-key.mp3");
   keyAudio.volume = 0.3;
 } catch (e) {
   keyAudio = null;
 }
-function fallbackKeySound() {
+const fallbackKeySound = () => {
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
   const buffer = ctx.createBuffer(1, 44100 * 0.01, 44100);
   const data = buffer.getChannelData(0);
@@ -27,15 +27,15 @@ function fallbackKeySound() {
   noise.buffer = buffer;
   noise.connect(ctx.destination);
   noise.start();
-}
-function playKeySound() {
+};
+const playKeySound = () => {
   if (keyAudio && keyAudio.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
     keyAudio.currentTime = 0;
     keyAudio.play().catch(fallbackKeySound);
   } else {
     fallbackKeySound();
   }
-}
+};
 
 /**
  * Point culture (en Français car je suis un peu obligé):
@@ -57,6 +57,7 @@ let extraLetters = 0;
 const wordsToType = [];
 
 const modeSelect = document.getElementById("mode");
+const typeSelect = document.getElementById("type");
 const timerSelect = document.getElementById("timer");
 const wordDisplay = document.getElementById("word-display");
 const testContainer = document.getElementById("test-container");
@@ -64,6 +65,9 @@ const results = document.getElementById("results-container");
 
 // Initialize the typing test
 const startTest = (wordCount = 200) => {
+  // Determine mode vs type
+  const mode = document.getElementById("mode").value;
+  const type = document.getElementById("type")?.value || "words";
   testContainer.classList.remove("hidden");
   results.classList.add("hidden");
   wordsToType.length = 0;
@@ -86,9 +90,14 @@ const startTest = (wordCount = 200) => {
     resultsChart = null;
   }
 
-  // Generate words
+  // Generate words list based on type (words vs numbers)
+  const language = document.getElementById("language").value;
+  const list =
+    type === "numbers"
+      ? getWordsByDifficulty(mode, "numbers")
+      : getWordsByDifficulty(mode, language);
   for (let i = 0; i < wordCount; i++) {
-    wordsToType.push(getRandomWord(modeSelect.value));
+    wordsToType.push(list[Math.floor(Math.random() * list.length)]);
   }
 
   // Create spans for each letter of each word
@@ -171,32 +180,28 @@ const updateLetter = (event) => {
 
   const key = event.key;
 
-  // Handle backspace
   if (key === "Backspace") {
     if (totalLetters > 0) {
       const letters = wordDisplay.querySelectorAll(".letter");
       const prevLetter = letters[totalLetters - 1];
 
-      // Remove styling from previous letter
-      prevLetter.textContent == "_"
-        ? (prevLetter.textContent = " ")
-        : (prevLetter.textContent = prevLetter.textContent);
+      if (prevLetter.querySelector(".error-overlay")) {
+        prevLetter.removeChild(prevLetter.querySelector(".error-overlay"));
+      }
+
       prevLetter.classList.remove("text-amber-500", "text-red-500");
       prevLetter.style.textDecoration = "underline";
 
-      // Remove styling from current letter if it exists
       const currentLetter = letters[totalLetters];
       if (currentLetter) {
         currentLetter.style.textDecoration = "none";
       }
 
-      // Update counters
       totalLetters--;
       if (prevLetter.classList.contains("text-amber-500")) {
         correctLetters--;
       }
 
-      // Update word/letter indices
       if (currentLetterIndex > 0) {
         currentLetterIndex--;
       } else if (currentWordIndex > 0) {
@@ -211,7 +216,7 @@ const updateLetter = (event) => {
     return;
   }
 
-  if (key.length !== 1 && key !== " ") return; // Ignore special keys except space
+  if (key.length !== 1 && key !== " ") return;
   startTimer();
 
   const currentWord = wordsToType[currentWordIndex];
@@ -225,29 +230,27 @@ const updateLetter = (event) => {
 
   // Check if the typed letter matches the current letter
   const isCorrect = key === currentLetter.textContent;
+
   if (isCorrect) {
     currentLetter.classList.add("text-amber-500");
     correctLetters++;
   } else {
-    currentLetter.textContent == " "
-      ? (currentLetter.textContent = "_")
-      : (currentLetter.textContent = currentLetter.textContent);
+    const errorOverlay = document.createElement("span");
+    errorOverlay.className = "error-overlay";
+    errorOverlay.textContent = key === " " ? "_" : key;
+    currentLetter.appendChild(errorOverlay);
     currentLetter.classList.add("text-red-500");
     incorrectLetters++;
   }
 
-  // Remove underline from current letter
   currentLetter.style.textDecoration = "none";
 
-  // Update word/letter indices
   currentLetterIndex++;
   if (currentLetterIndex >= currentWord.length + 1) {
-    // +1 for space
     currentWordIndex++;
     currentLetterIndex = 0;
   }
 
-  // Underline next letter if available
   const nextLetter = letters[totalLetters];
   if (nextLetter) {
     nextLetter.style.textDecoration = "underline";
@@ -260,13 +263,12 @@ const updateLetter = (event) => {
   const currentLine = Math.floor(currentLetter.offsetTop / lineHeight);
 
   if (currentLine >= 2) {
-    const scrollAmount = (currentLine - 1) * lineHeight; // Garde toujours 2 lignes visibles au-dessus
+    const scrollAmount = (currentLine - 1) * lineHeight; // keep 2 lines visible
     wordDisplay.style.transform = `translateY(-${scrollAmount}px)`;
   } else {
     wordDisplay.style.transform = "translateY(0)";
   }
 
-  // Update stats
   updateResults();
   updateProgressBar(timeLeft, timerSelect);
 };
@@ -281,6 +283,16 @@ const endTest = async () => {
   timeLeft = 0;
   const { wpm, accuracy, raw, correct, incorrect, extra, consistency } =
     getCurrentStats();
+  const stats = {
+    wpm,
+    accuracy,
+    raw,
+    correct,
+    incorrect,
+    extra,
+    consistency,
+    type: typeSelect.value,
+  };
   const langSelect = document.getElementById("language");
   const modeSelect = document.getElementById("mode") ||
     document.getElementById("mode-button") || { value: "medium" };
@@ -300,7 +312,13 @@ const endTest = async () => {
   else langLabel = langValue.charAt(0).toUpperCase() + langValue.slice(1);
   let modeLabel = modeValue.charAt(0).toUpperCase() + modeValue.slice(1);
   if (modeValue === "numbers") modeLabel = "Numbers";
-  
+
+  const typeLabel = stats.type.charAt(0).toUpperCase() + stats.type.slice(1);
+  const typeIcon =
+    stats.type === "numbers"
+      ? '<i class="fa-solid fa-hashtag text-[var(--color-warning)]"></i>'
+      : '<i class="fa-solid fa-font text-[var(--color-primary)]"></i>';
+
   const modeIcon =
     modeValue === "numbers"
       ? '<i class="fa-solid fa-hashtag text-[var(--color-warning)]"></i>'
@@ -319,6 +337,7 @@ const endTest = async () => {
         </div>
         <div class="mt-6 p-6 bg-[var(--color-color-bg-secondary)] text-[var(--color-text-secondary)] text-sm font-mono lowercase flex flex-col gap-2">
           <div>language: <span class="text-[var(--color-secondary)] font-bold">${langLabel}</span></div>
+          <div>type: <span class="text-[var(--color-secondary)] font-bold">${typeLabel} ${typeIcon}</span></div>
           <div>mode: <span class="text-[var(--color-secondary)] font-bold">${modeLabel} ${modeIcon}</span></div>
           <div>time: <span class="text-[var(--color-secondary)] font-bold">${timerValue}s</span></div>
         </div>
@@ -368,17 +387,14 @@ const endTest = async () => {
   }, 3000);
 
   // Get current stats
-  const stats = getCurrentStats();
-  const language = document.getElementById("language").value;
-
   // Post stats to server
   statPost(
     id,
     stats.wpm,
     stats.accuracy,
-    language,
-    modeSelect.value,
-    timerSelect.value
+    langValue,
+    modeValue,
+    timerValue
   );
 
   // Check for new badges
@@ -621,7 +637,6 @@ const updateResults = () => {
   }
 };
 
-
 const calcConsistency = () => {
   if (!timelineWpm || timelineWpm.length < 2) return "-";
   const mean = timelineWpm.reduce((a, b) => a + b, 0) / timelineWpm.length;
@@ -675,16 +690,27 @@ tinykeys(window, {
     testContainer.focus();
   },
 });
-testContainer.addEventListener('keyup', updateLetter);
-modeSelect.addEventListener('change', () => startTest());
-timerSelect.addEventListener('change', () => startTest());
-testContainer.addEventListener('keydown', (event) => {
+testContainer.addEventListener("keyup", updateLetter);
+typeSelect.addEventListener("change", () => {
+  startTest();
+  testContainer.focus();
+});
+modeSelect.addEventListener("change", () => {
+  startTest();
+  testContainer.focus();
+});
+timerSelect.addEventListener("change", () => {
+  startTest();
+  testContainer.focus();
+});
+testContainer.addEventListener("keydown", (event) => {
   // Play key sound if enabled
-  const { keyboardSounds = false } = JSON.parse(localStorage.getItem('soundFeedbackSettings')) || {};
-  if (keyboardSounds && (event.key.length === 1 || event.key === ' ')) {
+  const { keyboardSounds = false } =
+    JSON.parse(localStorage.getItem("soundFeedbackSettings")) || {};
+  if (keyboardSounds && (event.key.length === 1 || event.key === " ")) {
     playKeySound();
   }
-  if (event.key === ' ') {
+  if (event.key === " ") {
     event.preventDefault(); // Prevent scrolling
   }
 });
@@ -696,4 +722,3 @@ restartButton.addEventListener("click", () => {
 
 // Start the test
 startTest();
-

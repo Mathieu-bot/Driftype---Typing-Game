@@ -27,6 +27,15 @@ export const badgeConfig = {
       color: 'rainbow',
       animated: true,
       check: (stats) => stats.wpm >= 120 && stats.accuracy >= 98
+    },
+    {
+      id: 'special_number_legend',
+      name: { en: 'Number Legend', fr: 'Légende des Nombres' },
+      description: { en: '130+ WPM with 100% accuracy in Numbers Mode', fr: '130+ MPM avec 100% de précision en mode Nombres' },
+      icon: 'fa-solid fa-hashtag',
+      color: 'rainbow',
+      animated: true,
+      check: (stats) => stats.type === 'numbers' && stats.wpm >= 130 && stats.accuracy === 100
     }
   ],
   categories: {
@@ -105,6 +114,16 @@ export const badgeConfig = {
           color: 'rainbow',
           animated: true,
           check: (stats) => stats.wpm >= 100 && stats.accuracy >= 98
+        },
+        {
+          id: 'mastery_ultimate',
+          name: { en: 'Ultimate Master', fr: 'Maître Ultime' },
+          description: { en: '150+ WPM with 100% accuracy', fr: '150+ MPM avec 100% de précision' },
+          icon: 'fa-solid fa-medal',
+          threshold: 150,
+          color: 'rainbow',
+          animated: true,
+          check: (stats) => stats.wpm >= 150 && stats.accuracy === 100
         }
       ]
     },
@@ -146,6 +165,15 @@ export const badgeConfig = {
           threshold: 90,
           color: 'gold',
           check: (stats) => stats.consistency >= 90
+        },
+        {
+          id: 'consistency_perfect',
+          name: { en: 'Perfect Consistency', fr: 'Constance Parfaite' },
+          description: { en: 'Achieve 100% consistency', fr: 'Obtenir 100% de constance' },
+          icon: 'fa-solid fa-equals',
+          threshold: 100,
+          color: 'diamond',
+          check: (stats) => stats.consistency === 100
         }
       ]
     },

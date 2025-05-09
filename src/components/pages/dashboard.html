@@ -58,11 +58,11 @@
             <button
               data-tooltip-target="tooltip-practice"
               type="button"
-              class="flex flex-col items-center justify-center rounded-s-full hover:bg-[var(--color-bg)] transition w-full h-full cursor-pointer"
+              class="flex flex-col items-center justify-center rounded-s-full bg-[var(--color-bg)] transition w-full h-full cursor-pointer"
               id="practice-btn"
             >
               <i
-                class="fa-solid fa-keyboard text-[var(--color-text)] text-2xl group-hover:text-amber-500"
+                class="fa-solid fa-keyboard text-2xl text-amber-500"
               ></i>
               <span class="sr-only">Practice</span>
             </button>
@@ -183,7 +183,6 @@
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
-              <option value="numbers">Numbers</option>
             </select>
             <div
               id="mode-dropdown"
@@ -207,12 +206,6 @@
                   data-value="hard"
                 >
                   Hard
-                </button>
-                <button
-                  class="w-full text-left px-4 py-2 hover:bg-[var(--color-primary)] hover:text-[var(--color-text)]"
-                  data-value="numbers"
-                >
-                  Numbers
                 </button>
               </div>
             </div>
@@ -299,6 +292,9 @@
               <option value="30">30 s</option>
               <option value="60">60 s</option>
               <option value="90">90 s</option>
+              <option value="120">2 m</option>
+              <option value="150">2.5 m</option>
+              <option value="180">3 m</option>
             </select>
             <div
               id="timer-dropdown"
@@ -323,6 +319,43 @@
                 >
                   90 s
                 </button>
+                <button
+                  class="w-full text-left px-4 py-2 hover:bg-[var(--color-primary)] hover:text-[var(--color-text)]"
+                  data-value="120"
+                >
+                  2 m
+                </button>
+                <button
+                  class="w-full text-left px-4 py-2 hover:bg-[var(--color-primary)] hover:text-[var(--color-text)]"
+                  data-value="150"
+                >
+                  2.5 m
+                </button>
+                <button
+                  class="w-full text-left px-4 py-2 hover:bg-[var(--color-primary)] hover:text-[var(--color-text)]"
+                  data-value="180"
+                >
+                  3 m
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Type Selection -->
+          <div class="relative inline-block ml-4" id="type-container">
+            <button id="type-button" class="flex items-center group p-2 cursor-pointer">
+              <i class="fa-solid fa-hashtag text-amber-500 mr-2"></i>
+              <span id="type-text">Words</span>
+              <i class="fa-solid fa-caret-down ml-2 group-hover:translate-0.5"></i>
+            </button>
+            <select id="type" class="hidden">
+              <option value="words">Words</option>
+              <option value="numbers">Numbers</option>
+            </select>
+            <div id="type-dropdown" class="hidden absolute left-0 mt-2 w-36 bg-[var(--color-bg)] rounded-lg shadow-lg border border-[var(--color-input)] z-50">
+              <div class="py-1">
+                <button class="w-full text-left px-4 py-2 hover:bg-[var(--color-primary)] hover:text-[var(--color-text)]" data-value="words">Words</button>
+                <button class="w-full text-left px-4 py-2 hover:bg-[var(--color-primary)] hover:text-[var(--color-text)]" data-value="numbers">Numbers</button>
               </div>
             </div>
           </div>
@@ -498,8 +531,7 @@
     <script src="../js/script.js" type="module"></script>
     <script src="../js/pages/userInfofetch.js" type="module"></script>
     <script src="../js/logoutFunc.js"></script>
-    <script src="../js/fireworks.js"></script>
-    <script src="../js/navBarRedirection.js" type="module"></script>
+    <script src="../js/fireworks.js"></script>    <script src="../js/navBarRedirection.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="../js/gamePreferences.js"></script>
     <script>

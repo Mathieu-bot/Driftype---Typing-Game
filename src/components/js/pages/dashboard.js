@@ -23,6 +23,13 @@ const DROPDOWNS_CONFIG = [
     selectId: 'timer',
     textId: 'timer-text',
   },
+  {
+    containerId: 'type-container',
+    buttonId: 'type-button',
+    dropdownId: 'type-dropdown',
+    selectId: 'type',
+    textId: 'type-text',
+  },
 ];
 
 const initDashboard = () => {
@@ -95,15 +102,12 @@ const initDropdowns = () => {
       return;
     }
 
-    // Initialisation du texte du dropdown
     text.textContent = select.selectedOptions[0]?.textContent || 'Sélectionner';
 
-    // Gestion des événements pour l'ouverture et fermeture du dropdown
     button.addEventListener('click', handleDropdownToggle(config));
     initDropdownOptions(dropdown, select, text);
   });
 
-  // Fermeture des dropdowns au clic externe
   document.addEventListener('click', (e) => {
     DROPDOWNS_CONFIG.forEach(({ containerId, dropdownId }) => {
       const container = document.getElementById(containerId);
@@ -115,13 +119,11 @@ const initDropdowns = () => {
   });
 };
 
-// Fonction pour gérer l'affichage du dropdown
 const handleDropdownToggle = (config) => (e) => {
   e.stopPropagation();
   const dropdown = document.getElementById(config.dropdownId);
   dropdown?.classList.toggle('hidden');
 
-  // Fermer les autres dropdowns
   DROPDOWNS_CONFIG.forEach(({ dropdownId }) => {
     if (dropdownId !== config.dropdownId) {
       document.getElementById(dropdownId)?.classList.add('hidden');
@@ -129,7 +131,6 @@ const handleDropdownToggle = (config) => (e) => {
   });
 };
 
-// Initialisation des options dans chaque dropdown
 const initDropdownOptions = (dropdown, select, textElement) => {
   dropdown.querySelectorAll('button').forEach((option) => {
     option.addEventListener('click', () => {
@@ -141,7 +142,7 @@ const initDropdownOptions = (dropdown, select, textElement) => {
   });
 };
 
-// Lancement de l'initialisation
+
 initDashboard();
 initUserMenu();
 initDropdowns();

@@ -87,7 +87,7 @@ const initLogin = () => {
           </div>
           <a
             href="forgot-password.html"
-            class="text-[var(--color-text-secondary)] hover:text-active-600 text-sm"
+            class="text-active-600 hover:text-active-700 text-sm"
             >Forgot Password?</a
           >
         </div>

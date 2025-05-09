@@ -45,6 +45,14 @@ A modern typing game built with HTML, CSS, and Vanilla JavaScript. Features incl
    npm run dev
    ```
 
+### IF YOU WNAT TO RUN IT IN ONE COMMAND
+```bash
+   npm run start
+   ```
+That's gonna run everything together
+
+   
+
 ## Google Sign-In Configuration
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project
